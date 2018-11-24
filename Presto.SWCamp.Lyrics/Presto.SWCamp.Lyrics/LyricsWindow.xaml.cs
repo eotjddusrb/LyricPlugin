@@ -27,6 +27,10 @@ namespace Presto.SWCamp.Lyrics
         {
             InitializeComponent();
 
+            ///
+            PrestoSDK.PrestoService.Player.StreamChanged += Player_StreamChanged;
+            ///
+
             var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(100)
@@ -39,18 +43,27 @@ namespace Presto.SWCamp.Lyrics
             //////////////////
             ///
 
-            string format = @"mm\:ss\.ff";
-            string directory = @"C:\Users\cbnu\source\repos\LyricPlugin\Musics\";
-
-            string[] lines = File.ReadAllLines(directory + "숀 (SHAUN) - Way Back Home.lrc");
-            for (int index = 3; index < lines.Length; index++)
+            if (PrestoSDK.PrestoService.Player.Position != 0) //작성중 필요한 내용 if문 수행하지않음
             {
-                var splitData = lines[index].Split(']');
-                var time = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
-                MessageBox.Show(time.ToString());
+
+                string format = @"mm\:ss\.ff";
+                string directory = @"C:\Users\cbnu\source\repos\LyricPlugin\Musics\";
+                string title = PrestoSDK.PrestoService.Player.CurrentMusic.Title;
+                string[] lines = File.ReadAllLines(directory + title + ".lrc");
+                for (int index = 3; index < lines.Length; index++)
+                {
+                    var splitData = lines[index].Split(']');
+                    var time = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
+                    MessageBox.Show(time.ToString());
+                }
             }
             ////////////
 
+        }
+
+        private void Player_StreamChanged(object sender, Common.StreamChangedEventArgs e)
+        {
+            
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -58,7 +71,6 @@ namespace Presto.SWCamp.Lyrics
             //lyricBox.Text = 
             //lyricBox.Text = PrestoSDK.PrestoService.Player.Position.ToString();
         }
-
 
 
     }
