@@ -23,7 +23,10 @@ namespace Presto.SWCamp.Lyrics
     public partial class LyricsWindow : Window
     {
         
-
+        double[] SplitTime;
+        string[] SplitLyric;
+        //음악이 변경되었을때 가사정보에서 시간과 해당하는 가사를 읽어옴.
+        //
 
         public LyricsWindow()
         {
@@ -67,8 +70,9 @@ namespace Presto.SWCamp.Lyrics
                 {
                     var splitData = lines[index].Split(']');
                     var time = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
-                    //time.TotalMilliseconds
-                    MessageBox.Show(time.ToString());
+                    SplitTime[index - 3] = time.TotalMilliseconds;
+
+                    //MessageBox.Show(lines[index]);
                 }
             }
             ////////////
