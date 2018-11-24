@@ -6,23 +6,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ps="clr-namespace:Presto.SDK;assembly=Presto.SDK"
     Title="플레이어 가사 창"
-    Width="600"
-    Height="400"
+    Width="500"
+    Height="700"
     DataContext="{x:Static ps:PrestoSDK.PrestoService}"
     mc:Ignorable="d">
     <Window.Background>
-        <ImageBrush ImageSource="C:/Users/cbnu/source/repos/LyricPlugin/Images/background002.png" Stretch="UniformToFill"/>
+        <ImageBrush ImageSource="{Binding Player.CurrentMusic.Album.Picture}" Stretch="UniformToFill" />
+        
     </Window.Background>
-    <StackPanel VerticalAlignment="Center">
-        <TextBlock
-            FontSize="14"
-            Text="{Binding Player.CurrentMusic.Title}"
-            TextAlignment="Center" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200*"/>
+            <ColumnDefinition Width="300*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200*"/>
+            <RowDefinition Height="500*"/>
+        </Grid.RowDefinitions>
 
-        <TextBlock
-            x:Name="lyricBox"
-            FontSize="24"
-            Text="가사가 여기에 표시됩니다."
-            TextAlignment="Center" />
-    </StackPanel>
+        <StackPanel VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" >
+            <TextBlock
+                x:Name="lyricBox"
+                FontSize="24"
+                Text="가사가 여기에 표시됩니다."
+                TextAlignment="Center" Foreground="White" >
+                <TextBlock.Effect>
+                    <DropShadowEffect/>
+                </TextBlock.Effect>
+            </TextBlock>
+        </StackPanel>
+        <StackPanel  Grid.Row="0" Grid.Column="0" >
+            <Image Width="200" Height="200" Source="{Binding Player.CurrentMusic.Album.Picture}" />
+        </StackPanel>
+        <StackPanel  Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" >
+            <TextBlock
+                FontSize="20"
+                Text="{Binding Player.CurrentMusic.Title}"
+                TextAlignment="Center" />
+            <TextBlock
+                FontSize="14"
+                Text="{Binding Player.CurrentMusic.Artist.Name}"
+                TextAlignment="Center" />
+        </StackPanel>
+    </Grid>
 </Window>
