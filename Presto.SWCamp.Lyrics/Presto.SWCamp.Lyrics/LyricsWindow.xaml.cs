@@ -22,17 +22,22 @@ namespace Presto.SWCamp.Lyrics
     /// </summary>
     public partial class LyricsWindow : Window
     {
-        
-        double[] SplitTime;
-        string[] SplitLyric;
+        //전역 변수
+
+        List<double> SplitTime = new List<double>();
+        List<string> SplitLyric = new List<string>();
         //음악이 변경되었을때 가사정보에서 시간과 해당하는 가사를 읽어옴.
+
+        bool IsMusicPlaying = false;
+        //음악이 재생되는지 확인
+        
         //
 
         public LyricsWindow()
         {
 
             /////// 배워가는 곳/////
-            ///
+            
 
             //PrestoSDK.PrestoService.Player.StreamChanged += Player_StreamChanged;
             //presto에서 현재 재생중인 음악이 변경되었을 때
@@ -53,29 +58,7 @@ namespace Presto.SWCamp.Lyrics
             timer.Tick += Timer_Tick;
             timer.Start();
 
-
-
-            //////////////////
-            ///
-
-            if (PrestoSDK.PrestoService.Player.Position != 0) //작성중 필요한 내용 if문 수행하지않음
-            {
-
-                
-                string directory = @"C:\Users\cbnu\source\repos\LyricPlugin\Musics\";
-                string title = PrestoSDK.PrestoService.Player.CurrentMusic.Title;
-                string[] lines = File.ReadAllLines(directory + title + ".lrc");
-                string format = @"mm\:ss\.ff";
-                for (int index = 3; index < lines.Length; index++)
-                {
-                    var splitData = lines[index].Split(']');
-                    var time = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
-                    SplitTime[index - 3] = time.TotalMilliseconds;
-
-                    //MessageBox.Show(lines[index]);
-                }
-            }
-            ////////////
+            
 
         }
 
@@ -85,23 +68,85 @@ namespace Presto.SWCamp.Lyrics
             string directory = @"C:\Users\cbnu\source\repos\LyricPlugin\Lyrics\";
             //현재 재생중인 음악 파일의 이름을 가져옴.
             string songName = Path.GetFileNameWithoutExtension(PrestoSDK.PrestoService.Player.CurrentMusic.Path);
+            
+            //test 001
             MessageBox.Show(songName);
 
             string[] lines = File.ReadAllLines(directory + songName + ".lrc");
             
+            // 현재 재생하는 음악과 읽어온 가사가 맞는지 확인
+            bool LyrictoPlay = true;
+            for(int index = 0; index < 3; index++)
+            {
+                var splitData_1 = lines[index].Split(':');
+                var splitData_2 = splitData_1[1].Split(']');
+                var playData = splitData_2[0].Trim();
+                /*
+                switch (index)
+                {
+                    case 0:
+                        if (String.Compare(playData, PrestoSDK.PrestoService.Player.CurrentMusic.Artist.ToString()) != 0)
+                        {
+                            LyrictoPlay = false;
+                            MessageBox.Show(playData + " ~ " + PrestoSDK.PrestoService.Player.CurrentMusic.Artist.ToString());
+                        }
+                        break;
+                    case 1:
+                        if (String.Compare(playData, PrestoSDK.PrestoService.Player.CurrentMusic.Title) != 0)
+                        {
+                            LyrictoPlay = false;
+                            MessageBox.Show(playData + " ~ " + PrestoSDK.PrestoService.Player.CurrentMusic.Title);
+                        }
+                        break;
+                    case 2:
+                        if (String.Compare(playData, PrestoSDK.PrestoService.Player.CurrentMusic.Album.ToString()) != 0)
+                        {
+                            LyrictoPlay = false;
+                            MessageBox.Show(playData + " ~ " + PrestoSDK.PrestoService.Player.CurrentMusic.Album.ToString());
+                        }
+                        break;
+                }
+                MessageBox.Show(LyrictoPlay.ToString());*/
+            }
+
+
             string format = @"mm\:ss\.ff";
             for (int index = 3; index < lines.Length; index++)
             {
                 var splitData = lines[index].Split(']');
-                var time = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
-                //MessageBox.Show(time.ToString());
+                var time_t = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
+                SplitTime.Add( time_t.TotalMilliseconds);
+                SplitLyric.Add(splitData[1].Trim());
+                //MessageBox.Show(SplitTime[index -3].ToString());
+                //MessageBox.Show(SplitLyric[index - 3]);
             }
+
+            //SplitTime.Add(3600000);
+            //SplitLyric.Add("감사합니다.");
+
+            //가사가 준비됨
+            IsMusicPlaying = true;
+            
 
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            //lyricBox.Text = 
+            if (IsMusicPlaying) {
+                var currentTime = PrestoSDK.PrestoService.Player.Position;
+
+                for (int i = SplitTime.Count - 1;
+                    SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
+                    i--)
+                {
+                    lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
+                }
+
+                //int index = SplitTime.Count-1;
+                //for (; SplitTime[index] > PrestoSDK.PrestoService.Player.Position; index--) ;
+
+
+            }
             //lyricBox.Text = PrestoSDK.PrestoService.Player.Position.ToString();
         }
 
