@@ -10,7 +10,9 @@
     Height="400"
     DataContext="{x:Static ps:PrestoSDK.PrestoService}"
     mc:Ignorable="d">
-
+    <Window.Background>
+        <ImageBrush ImageSource="C:/Users/cbnu/source/repos/LyricPlugin/Images/background002.png" Stretch="UniformToFill"/>
+    </Window.Background>
     <StackPanel VerticalAlignment="Center">
         <TextBlock
             FontSize="14"

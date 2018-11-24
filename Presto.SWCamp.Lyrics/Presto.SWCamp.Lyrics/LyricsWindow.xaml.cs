@@ -27,17 +27,27 @@ namespace Presto.SWCamp.Lyrics
         List<double> SplitTime = new List<double>();
         List<string> SplitLyric = new List<string>();
         //음악이 변경되었을때 가사정보에서 시간과 해당하는 가사를 읽어옴.
+        
 
         bool IsMusicPlaying = false;
         //음악이 재생되는지 확인
-        
-        //
+        bool IsMemberDisplay = false;
+        //가수의 파트가 나뉘어 표시될 경우
 
         public LyricsWindow()
         {
 
             /////// 배워가는 곳/////
+
+
+
+
+            //if (PrestoSDK.PrestoService.Player.PlaybackState == Common.PlaybackState.Playing)
+            // 노래가 재생중인 상태
             
+            //PrestoSDK.PrestoService.Player.CurrentMusic.Artist.Name
+            //PrestoSDK.PrestoService.Player.CurrentMusic.Album.Picture
+            //가수와 앨범또한 구조체형태로 되어있음
 
             //PrestoSDK.PrestoService.Player.StreamChanged += Player_StreamChanged;
             //presto에서 현재 재생중인 음악이 변경되었을 때
@@ -116,7 +126,19 @@ namespace Presto.SWCamp.Lyrics
                 var splitData = lines[index].Split(']');
                 var time_t = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
                 SplitTime.Add( time_t.TotalMilliseconds);
-                SplitLyric.Add(splitData[1].Trim());
+                //if (splitData[2] == null) ;
+                if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
+                {
+                    IsMemberDisplay = true; //멤버 파트가 쓰여있는 가사
+                    SplitLyric.Add(splitData[2].Trim());
+                }
+                else
+                {
+                    SplitLyric.Add(splitData[1].Trim());
+                }
+                
+                
+                
                 //MessageBox.Show(SplitTime[index -3].ToString());
                 //MessageBox.Show(SplitLyric[index - 3]);
             }
@@ -142,12 +164,9 @@ namespace Presto.SWCamp.Lyrics
                     lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
                 }
 
-                //int index = SplitTime.Count-1;
-                //for (; SplitTime[index] > PrestoSDK.PrestoService.Player.Position; index--) ;
-
-
+               
             }
-            //lyricBox.Text = PrestoSDK.PrestoService.Player.Position.ToString();
+            
         }
 
 
