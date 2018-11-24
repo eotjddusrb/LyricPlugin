@@ -11,10 +11,20 @@
     DataContext="{x:Static ps:PrestoSDK.PrestoService}"
     mc:Ignorable="d">
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Player.CurrentMusic.Album.Picture}" Stretch="UniformToFill" />
-        
+        <VisualBrush>
+            <VisualBrush.Visual>
+                <Grid ClipToBounds="True">
+                    <Image Source="{Binding Player.CurrentMusic.Album.Picture}" Stretch="Fill">
+                        <Image.Effect>
+                            <BlurEffect Radius="12"/>
+                        </Image.Effect>
+                    </Image>
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
     </Window.Background>
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200*"/>
             <ColumnDefinition Width="300*"/>

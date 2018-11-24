@@ -22,6 +22,9 @@ namespace Presto.SWCamp.Lyrics
     /// </summary>
     public partial class LyricsWindow : Window
     {
+
+        SortedList<double, string> lists = new SortedList<double, string>();
+
         //전역 변수
 
         List<double> SplitTime = new List<double>();
@@ -33,18 +36,33 @@ namespace Presto.SWCamp.Lyrics
         //음악이 재생되는지 확인
         bool IsMemberDisplay = false;
         //가수의 파트가 나뉘어 표시될 경우
+        bool IsMultiLyric = false;
+        //다수의 가사가 출력될경우
 
         public LyricsWindow()
         {
 
             /////// 배워가는 곳/////
+            
+            /*
+            if (!lists.ContainsKey(123123))
+            {
+                lists.Add(300, "asdasd");
+            }
+            else
+            {
+                SplitTime[0] == lists.Keys[0];
+                SplitLyric[0] == lists.Values[0];
+                lists[SplitTime[0]] == SplitLyric[0];
 
-
+                lists[300] = lists[300] + "\n" + "sadasd";
+            }
+            */
 
 
             //if (PrestoSDK.PrestoService.Player.PlaybackState == Common.PlaybackState.Playing)
             // 노래가 재생중인 상태
-            
+
             //PrestoSDK.PrestoService.Player.CurrentMusic.Artist.Name
             //PrestoSDK.PrestoService.Player.CurrentMusic.Album.Picture
             //가수와 앨범또한 구조체형태로 되어있음
@@ -79,9 +97,6 @@ namespace Presto.SWCamp.Lyrics
             //현재 재생중인 음악 파일의 이름을 가져옴.
             string songName = Path.GetFileNameWithoutExtension(PrestoSDK.PrestoService.Player.CurrentMusic.Path);
             
-            //test 001
-            MessageBox.Show(songName);
-
             string[] lines = File.ReadAllLines(directory + songName + ".lrc");
             
             // 현재 재생하는 음악과 읽어온 가사가 맞는지 확인
@@ -137,6 +152,10 @@ namespace Presto.SWCamp.Lyrics
                     SplitLyric.Add(splitData[1].Trim());
                 }
                 
+                if(index>4 && SplitTime[index] == SplitTime[index - 1] && IsMultiLyric != true)
+                {
+                    IsMultiLyric = true;
+                }
                 
                 
                 //MessageBox.Show(SplitTime[index -3].ToString());
@@ -157,12 +176,37 @@ namespace Presto.SWCamp.Lyrics
             if (IsMusicPlaying) {
                 var currentTime = PrestoSDK.PrestoService.Player.Position;
 
-                for (int i = SplitTime.Count - 1;
-                    SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
-                    i--)
+                if (IsMultiLyric)
                 {
-                    lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
+                    for (int i = SplitTime.Count - 1;
+                        SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
+                        i--)
+                    {
+                        if (i>0 && SplitTime[i] == SplitTime[i-1])
+                        {
+                            if(i > 1 && SplitTime[i-1] == SplitTime[i - 2])
+                            {
+                                lyricBox.Text = SplitLyric[i-2] + "\n"+ SplitLyric[i - 1] + "\n"+ SplitLyric[i];
+                            }
+                        }
+                        else
+                        {
+                            lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
+                        }
+                        
+                    }
                 }
+                else
+                {
+                    for (int i = SplitTime.Count - 1;
+                         SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
+                         i--)
+                    {
+
+                        lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
+                    }
+                }
+               
 
                
             }
