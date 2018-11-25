@@ -92,7 +92,10 @@ namespace Presto.SWCamp.Lyrics
 
         private void Player_StreamChanged(object sender, Common.StreamChangedEventArgs e)
         {
-            
+            //전역변수로 설정된 시간과 가사 변수를 초기화 시킨다.
+            //SplitTime.RemoveRange(0, Math.Max(0, SplitTime.Count-1));
+            //SplitLyric.RemoveRange(0, Math.Max(0, SplitLyric.Count - 1));
+
             string songDirect = @"C:\Users\AndyLee\Documents\Gitahead\LyricPlugin\Lyrics\";
             
             //현재 재생중인 음악 파일의 이름을 가져옴.
@@ -126,12 +129,7 @@ namespace Presto.SWCamp.Lyrics
                 {
                     SplitLyric.Add(splitData[1].Trim());
                 }
-                
-                if(index>4 && SplitTime[index] == SplitTime[index - 1] && IsMultiLyric != true)
-                {
-                    IsMultiLyric = true;
-                }
-                
+
             }
             //가사가 준비됨
             IsMusicPlaying = true;

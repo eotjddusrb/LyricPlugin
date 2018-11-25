@@ -10,7 +10,7 @@
     Height="700"
     DataContext="{x:Static ps:PrestoSDK.PrestoService}"
     mc:Ignorable="d">
-    <Window.Background>
+    <!--<Window.Background>
         <VisualBrush>
             <VisualBrush.Visual>
                 <Grid ClipToBounds="True">
@@ -22,7 +22,7 @@
                 </Grid>
             </VisualBrush.Visual>
         </VisualBrush>
-    </Window.Background>
+    </Window.Background>-->
     <Grid>
         
         <Grid.ColumnDefinitions>
