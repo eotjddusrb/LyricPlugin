@@ -94,7 +94,6 @@ namespace Presto.SWCamp.Lyrics
             {
                 var splitData = lines[index].Split(']');
                 var time_t = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
-                //SplitTime.Add(time_t.TotalMilliseconds);
 
                 // 현재 가사의 시간과 중복된 가사가 없을 경우
                 if (!SplitLists.ContainsKey(time_t.TotalMilliseconds))
@@ -110,7 +109,9 @@ namespace Presto.SWCamp.Lyrics
                         SplitLists.Add(time_t.TotalMilliseconds, splitData[1].Trim());
                     }
                 }
-                else // 현재 가사의 시간과 중복된 가사가 있는 경우
+                // 현재 가사의 시간과 중복된 시간이 있고, 유의미한 가사가 있는 경우
+                // Blankspace_Error
+                else if (SplitLists[time_t.TotalMilliseconds] != "") 
                 {
                     if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
                     {
@@ -134,21 +135,24 @@ namespace Presto.SWCamp.Lyrics
         {
             if (IsMusicPlaying)
             {
-                var currentTime = PrestoSDK.PrestoService.Player.Position; // interval == 100
+                var currentTime = PrestoSDK.PrestoService.Player.Position;
+                //Need to make a sync
 
                 for (int i = SplitLists.Count - 1;
                      SplitLists.Keys[i] > currentTime && SplitLists.Keys[0] <= currentTime;
                      i--)
                 {
-                    if(i == 0)
+                    //gonna use binary search
+
+                    if(i == 0) //first lyric - doesn`t have pre-lyric
                     {
-                        lyricBox.Text = SplitLists.Values[i] + "\n" + SplitLists.Values[i+1];
+                        lyricBox.Text = "\n" + SplitLists.Values[i] + "\n" + SplitLists.Values[i+1];
                     }
-                    else if(i==SplitLists.Count - 1)
+                    else if(i==SplitLists.Count - 1) //last lyric - doesn`t have post-lyric
                     {
-                        lyricBox.Text = SplitLists.Values[i-1] + "\n" + SplitLists.Values[i];
+                        lyricBox.Text = SplitLists.Values[i-1] + "\n" + SplitLists.Values[i] + "\n";
                     }
-                    else
+                    else // display pre-post lyric
                     {
                         lyricBox.Text = SplitLists.Values[i - 1] + "\n" + SplitLists.Values[i] + "\n" + SplitLists.Values[i + 1];
                     }
