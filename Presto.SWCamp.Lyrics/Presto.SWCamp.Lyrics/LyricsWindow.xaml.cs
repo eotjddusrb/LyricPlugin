@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+
 namespace Presto.SWCamp.Lyrics
 {
     /// <summary>
@@ -22,16 +23,14 @@ namespace Presto.SWCamp.Lyrics
     /// </summary>
     public partial class LyricsWindow : Window
     {
-
-        SortedList<double, string> lists = new SortedList<double, string>();
-
         //전역 변수
 
-        List<double> SplitTime = new List<double>();
-        List<string> SplitLyric = new List<string>();
+        SortedList<double, string> SplitLists = new SortedList<double, string>();
         //음악이 변경되었을때 가사정보에서 시간과 해당하는 가사를 읽어옴.
         
-
+        
+        
+        
         bool IsMusicPlaying = false;
         //음악이 재생되는지 확인
         bool IsMemberDisplay = false;
@@ -44,21 +43,7 @@ namespace Presto.SWCamp.Lyrics
 
             /////// 배워가는 곳/////
             
-            /*
-            if (!lists.ContainsKey(123123))
-            {
-                lists.Add(300, "asdasd");
-            }
-            else
-            {
-                SplitTime[0] == lists.Keys[0];
-                SplitLyric[0] == lists.Values[0];
-                lists[SplitTime[0]] == SplitLyric[0];
-
-                lists[300] = lists[300] + "\n" + "sadasd";
-            }
-            */
-
+           
 
             //if (PrestoSDK.PrestoService.Player.PlaybackState == Common.PlaybackState.Playing)
             // 노래가 재생중인 상태
@@ -70,8 +55,8 @@ namespace Presto.SWCamp.Lyrics
             //PrestoSDK.PrestoService.Player.StreamChanged += Player_StreamChanged;
             //presto에서 현재 재생중인 음악이 변경되었을 때
             //MessageBox.Show( PrestoSDK.PrestoService.Player.CurrentMusic.Path);
-
             //Path.GetFileNameWithoutExtension
+
 
             ///////////////////////
 
@@ -89,13 +74,14 @@ namespace Presto.SWCamp.Lyrics
             
 
         }
-
+        
+        // 재생하는 노래가 바뀔 때마다 가사를 불러올 수 있도록 함
         private void Player_StreamChanged(object sender, Common.StreamChangedEventArgs e)
         {
             //전역변수로 설정된 시간과 가사 변수를 초기화 시킨다.
-            //SplitTime.RemoveRange(0, Math.Max(0, SplitTime.Count-1));
-            //SplitLyric.RemoveRange(0, Math.Max(0, SplitLyric.Count - 1));
-
+            SplitLists.Clear();
+            
+            // 다른 컴터에서 사용시 변경해야함
             string songDirect = @"C:\Users\AndyLee\Documents\Gitahead\LyricPlugin\Lyrics\";
             
             //현재 재생중인 음악 파일의 이름을 가져옴.
@@ -103,37 +89,44 @@ namespace Presto.SWCamp.Lyrics
             
             string[] lines = File.ReadAllLines(songDirect + songName + ".lrc");
             
-            // 현재 재생하는 음악과 읽어온 가사가 맞는지 확인
-            
-            for(int index = 0; index < 3; index++)
-            {
-                var splitData_1 = lines[index].Split(':');
-                var splitData_2 = splitData_1[1].Split(']');
-                var playData = splitData_2[0].Trim();
-            }
-
-
             string format = @"mm\:ss\.ff";
             for (int index = 3; index < lines.Length; index++)
             {
                 var splitData = lines[index].Split(']');
                 var time_t = TimeSpan.ParseExact(splitData[0].Substring(1).Trim(), format, CultureInfo.InvariantCulture);
-                SplitTime.Add( time_t.TotalMilliseconds);
-                //if (splitData[2] == null) ;
-                if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
+                //SplitTime.Add(time_t.TotalMilliseconds);
+
+                // 현재 가사의 시간과 중복된 가사가 없을 경우
+                if (!SplitLists.ContainsKey(time_t.TotalMilliseconds))
                 {
-                    IsMemberDisplay = true; //멤버 파트가 쓰여있는 가사
-                    SplitLyric.Add(splitData[2].Trim());
+                    //가사파일의 한줄의 길이와 ']'를 기준으로 나눈 길이를 비교하여 ']'가 한번 더 생겼는지 확인
+                    if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
+                    {
+                        IsMemberDisplay = true; //멤버 파트가 쓰여있는 가사
+                        SplitLists.Add(time_t.TotalMilliseconds, splitData[2].Trim());
+                    }
+                    else
+                    {
+                        SplitLists.Add(time_t.TotalMilliseconds, splitData[1].Trim());
+                    }
                 }
-                else
+                else // 현재 가사의 시간과 중복된 가사가 있는 경우
                 {
-                    SplitLyric.Add(splitData[1].Trim());
+                    if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
+                    {
+                        IsMemberDisplay = true; //멤버 파트가 쓰여있는 가사
+                        SplitLists[time_t.TotalMilliseconds] = SplitLists[time_t.TotalMilliseconds] + "\n" + splitData[2].Trim();
+                    }
+                    else
+                    {
+                        SplitLists[time_t.TotalMilliseconds] = SplitLists[time_t.TotalMilliseconds] + "\n" + splitData[1].Trim();
+                        //가사에 한 줄 띄고 가사 추가
+                    }
                 }
 
             }
             //가사가 준비됨
             IsMusicPlaying = true;
-            
 
         }
 
@@ -141,19 +134,26 @@ namespace Presto.SWCamp.Lyrics
         {
             if (IsMusicPlaying)
             {
-                var currentTime = PrestoSDK.PrestoService.Player.Position;
+                var currentTime = PrestoSDK.PrestoService.Player.Position; // interval == 100
 
-
-                for (int i = SplitTime.Count - 1;
-                     SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
+                for (int i = SplitLists.Count - 1;
+                     SplitLists.Keys[i] > currentTime && SplitLists.Keys[0] <= currentTime;
                      i--)
                 {
-
-                    lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
+                    if(i == 0)
+                    {
+                        lyricBox.Text = SplitLists.Values[i] + "\n" + SplitLists.Values[i+1];
+                    }
+                    else if(i==SplitLists.Count - 1)
+                    {
+                        lyricBox.Text = SplitLists.Values[i-1] + "\n" + SplitLists.Values[i];
+                    }
+                    else
+                    {
+                        lyricBox.Text = SplitLists.Values[i - 1] + "\n" + SplitLists.Values[i] + "\n" + SplitLists.Values[i + 1];
+                    }
+                    //lyricBox.Text = lists.Values[Math.Max(0, i - 1)];
                 }
-
-
-
 
             }
             
