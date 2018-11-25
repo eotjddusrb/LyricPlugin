@@ -93,45 +93,20 @@ namespace Presto.SWCamp.Lyrics
         private void Player_StreamChanged(object sender, Common.StreamChangedEventArgs e)
         {
             
-            string directory = @"C:\Users\cbnu\source\repos\LyricPlugin\Lyrics\";
+            string songDirect = @"C:\Users\AndyLee\Documents\Gitahead\LyricPlugin\Lyrics\";
+            
             //현재 재생중인 음악 파일의 이름을 가져옴.
             string songName = Path.GetFileNameWithoutExtension(PrestoSDK.PrestoService.Player.CurrentMusic.Path);
             
-            string[] lines = File.ReadAllLines(directory + songName + ".lrc");
+            string[] lines = File.ReadAllLines(songDirect + songName + ".lrc");
             
             // 현재 재생하는 음악과 읽어온 가사가 맞는지 확인
-            bool LyrictoPlay = true;
+            
             for(int index = 0; index < 3; index++)
             {
                 var splitData_1 = lines[index].Split(':');
                 var splitData_2 = splitData_1[1].Split(']');
                 var playData = splitData_2[0].Trim();
-                /*
-                switch (index)
-                {
-                    case 0:
-                        if (String.Compare(playData, PrestoSDK.PrestoService.Player.CurrentMusic.Artist.ToString()) != 0)
-                        {
-                            LyrictoPlay = false;
-                            MessageBox.Show(playData + " ~ " + PrestoSDK.PrestoService.Player.CurrentMusic.Artist.ToString());
-                        }
-                        break;
-                    case 1:
-                        if (String.Compare(playData, PrestoSDK.PrestoService.Player.CurrentMusic.Title) != 0)
-                        {
-                            LyrictoPlay = false;
-                            MessageBox.Show(playData + " ~ " + PrestoSDK.PrestoService.Player.CurrentMusic.Title);
-                        }
-                        break;
-                    case 2:
-                        if (String.Compare(playData, PrestoSDK.PrestoService.Player.CurrentMusic.Album.ToString()) != 0)
-                        {
-                            LyrictoPlay = false;
-                            MessageBox.Show(playData + " ~ " + PrestoSDK.PrestoService.Player.CurrentMusic.Album.ToString());
-                        }
-                        break;
-                }
-                MessageBox.Show(LyrictoPlay.ToString());*/
             }
 
 
@@ -157,14 +132,7 @@ namespace Presto.SWCamp.Lyrics
                     IsMultiLyric = true;
                 }
                 
-                
-                //MessageBox.Show(SplitTime[index -3].ToString());
-                //MessageBox.Show(SplitLyric[index - 3]);
             }
-
-            //SplitTime.Add(3600000);
-            //SplitLyric.Add("감사합니다.");
-
             //가사가 준비됨
             IsMusicPlaying = true;
             
@@ -173,42 +141,22 @@ namespace Presto.SWCamp.Lyrics
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (IsMusicPlaying) {
+            if (IsMusicPlaying)
+            {
                 var currentTime = PrestoSDK.PrestoService.Player.Position;
 
-                if (IsMultiLyric)
-                {
-                    for (int i = SplitTime.Count - 1;
-                        SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
-                        i--)
-                    {
-                        if (i>0 && SplitTime[i] == SplitTime[i-1])
-                        {
-                            if(i > 1 && SplitTime[i-1] == SplitTime[i - 2])
-                            {
-                                lyricBox.Text = SplitLyric[i-2] + "\n"+ SplitLyric[i - 1] + "\n"+ SplitLyric[i];
-                            }
-                        }
-                        else
-                        {
-                            lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
-                        }
-                        
-                    }
-                }
-                else
-                {
-                    for (int i = SplitTime.Count - 1;
-                         SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
-                         i--)
-                    {
 
-                        lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
-                    }
-                }
-               
+                for (int i = SplitTime.Count - 1;
+                     SplitTime[i] > currentTime && SplitTime[0] <= currentTime;
+                     i--)
+                {
 
-               
+                    lyricBox.Text = SplitLyric[Math.Max(0, i - 1)];
+                }
+
+
+
+
             }
             
         }

@@ -1,3 +1,7 @@
+ 소현섭 개발자님
+
+iodesme@gmail.com
+
 개인 - 제출
 
 1. Github repo 만들기 - 제출
@@ -27,3 +31,4 @@ http://www.kodnix.com/Services/Presto/
 parse - 난이도 - 점수
 [] 괄호로 split불가해짐
 일본어 노래가되면 3줄이 한시간에 등장
+
