@@ -57,7 +57,7 @@ namespace Presto.SWCamp.Lyrics
             //MessageBox.Show( PrestoSDK.PrestoService.Player.CurrentMusic.Path);
             //Path.GetFileNameWithoutExtension
 
-
+            //String.IsNullOrWhiteSpace()
             ///////////////////////
 
             InitializeComponent();
@@ -111,7 +111,7 @@ namespace Presto.SWCamp.Lyrics
                 }
                 // 현재 가사의 시간과 중복된 시간이 있고, 유의미한 가사가 있는 경우
                 // Blankspace_Error
-                else if (SplitLists[time_t.TotalMilliseconds] != "") 
+                else if (!String.IsNullOrWhiteSpace(SplitLists[time_t.TotalMilliseconds])) 
                 {
                     if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
                     {
@@ -124,6 +124,7 @@ namespace Presto.SWCamp.Lyrics
                         //가사에 한 줄 띄고 가사 추가
                     }
                 }
+
 
             }
             //가사가 준비됨
