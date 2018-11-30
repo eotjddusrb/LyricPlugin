@@ -172,5 +172,9 @@ namespace Presto.SWCamp.Lyrics
 /////////
 // 가사가 현재 창에서 표시할 수 있는 길이보다 길 경우
 // font크기에 변화를 줄 수 있는지
-//
+// -> ( SplitLists.Values[Math.Max(0, i - 1)].Length > 20 ) 일 경우 한 줄에 표시하기 위해서
+// fontsize를 줄일 수 있도록
+// lyricBox.fontsize = 22 - SplitLists.Values[Math.Max(0, i - 1)].Length / 10
+// 기존 크기 22 에서 길이에 따라 줄일수 있도록
+// 
 /////////
