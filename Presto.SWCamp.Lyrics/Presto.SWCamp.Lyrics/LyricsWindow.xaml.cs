@@ -111,7 +111,7 @@ namespace Presto.SWCamp.Lyrics
                 }
                 // 현재 가사의 시간과 중복된 시간이 있고, 유의미한 가사가 있는 경우
                 // Blankspace_Error
-                else if (!String.IsNullOrWhiteSpace(SplitLists[time_t.TotalMilliseconds])) 
+                else if (!String.IsNullOrWhiteSpace(splitData[1])) 
                 {
                     if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
                     {
