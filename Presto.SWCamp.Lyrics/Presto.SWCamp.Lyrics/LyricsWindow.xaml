@@ -37,7 +37,7 @@
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" >
             <TextBlock
                 x:Name="lyricBox"
-                FontSize="24"
+                FontSize="22"
                 Text="가사가 여기에 표시됩니다."
                 TextAlignment="Center" Foreground="White" >
                 <TextBlock.Effect>
@@ -50,23 +50,23 @@
         </StackPanel>
         <StackPanel  Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock
-                FontSize="20"
+                FontSize="24"
                 Text="{Binding Player.CurrentMusic.Title}"
                 TextAlignment="Center" />
             <TextBlock
-                FontSize="14"
+                FontSize="20"
                 Text="{Binding Player.CurrentMusic.Artist.Name}"
                 TextAlignment="Center" />
         </StackPanel>
         <TextBlock
-                x:Name="prelyric"
-                FontSize="20"
-                Text="이전 가사가 여기에 표시됩니다."
-                TextAlignment="Center" Foreground="White" Grid.ColumnSpan="2" Margin="0,147,0,299" Grid.Row="1" />
+            x:Name="prelyric"
+            FontSize="18"
+            Text="이전 가사가 여기에 표시됩니다."
+            TextAlignment="Center" VerticalAlignment="Bottom" Foreground="White" Grid.ColumnSpan="2" Margin="0,0,0,290" Grid.Row="1" />
         <TextBlock
             x:Name="postlyric"
-            FontSize="20"
+            FontSize="18"
             Text="다음 가사가 여기에 표시됩니다."
-            TextAlignment="Center" Foreground="White" Grid.ColumnSpan="2" Margin="0,304,0,142" Grid.Row="1" />
+            TextAlignment="Center" Foreground="White" Grid.ColumnSpan="2" Margin="0,290,0,0" Grid.Row="1" />
     </Grid>
 </Window>

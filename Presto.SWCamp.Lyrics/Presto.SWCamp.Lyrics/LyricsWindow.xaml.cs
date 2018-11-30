@@ -78,7 +78,11 @@ namespace Presto.SWCamp.Lyrics
         {
             //전역변수로 설정된 시간과 가사 변수를 초기화 시킨다.
             SplitLists.Clear();
-            
+            //현재 가사창 또한 초기화 시킨다.
+            //prelyric.Text = "";
+            //lyricBox.Text = "";
+            //postlyric.Text = "";
+
             // 다른 컴터에서 사용시 변경해야함
             string songDirect = @"C:\Users\AndyLee\Documents\Gitahead\LyricPlugin\Lyrics\";
             
@@ -133,7 +137,7 @@ namespace Presto.SWCamp.Lyrics
         {
             if (IsMusicPlaying)
             {
-                var currentTime = PrestoSDK.PrestoService.Player.Position;
+                var currentTime = PrestoSDK.PrestoService.Player.Position+10;
                 //Need to make a sync
 
                 for (int i = SplitLists.Count - 1;
@@ -145,24 +149,31 @@ namespace Presto.SWCamp.Lyrics
                     {
                         prelyric.Text = "";
                         lyricBox.Text = SplitLists.Values[0];
-                        postlyric.Text = SplitLists.Values[1];
-                    }
-                    else if (Math.Max(0,i-1) == SplitLists.Count -1)
-                    {
-                        prelyric.Text = SplitLists.Values[i-1];
-                        lyricBox.Text = SplitLists.Values[i];
-                        postlyric.Text = "감사합니다";
+                        postlyric.Text = SplitLists.Values[1] + "\n" + SplitLists.Values[2];
                     }
                     else
                     {
                         prelyric.Text = SplitLists.Values[Math.Max(0, i - 2)];
                         lyricBox.Text = SplitLists.Values[Math.Max(0, i - 1)];
-                        postlyric.Text = SplitLists.Values[Math.Max(0, i)];
-                    }
-
-                    
-                    
+                        if (i != SplitLists.Count - 1)
+                            postlyric.Text = SplitLists.Values[Math.Max(0, i)] + "\n" + SplitLists.Values[i + 1];
+                        else
+                            postlyric.Text = SplitLists.Values[Math.Max(0, i)];
+                    } 
                 }
+                if(SplitLists.Keys[SplitLists.Count-1] <= currentTime)
+                {
+                    prelyric.Text = SplitLists.Values[SplitLists.Count - 2];
+                    lyricBox.Text = SplitLists.Values[SplitLists.Count - 1];
+                    postlyric.Text = "감사합니다";
+                }
+                else if(SplitLists.Keys[0] >= currentTime)
+                {
+                    prelyric.Text = "";
+                    lyricBox.Text = "";
+                    postlyric.Text = SplitLists.Values[0]+"\n"+SplitLists.Values[1];
+                }
+
 
             }
             
