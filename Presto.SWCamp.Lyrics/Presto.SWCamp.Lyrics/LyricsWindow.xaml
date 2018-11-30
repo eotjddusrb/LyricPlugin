@@ -24,7 +24,7 @@
         </VisualBrush>
     </Window.Background>
     <Grid>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200*"/>
             <ColumnDefinition Width="300*"/>
@@ -58,5 +58,15 @@
                 Text="{Binding Player.CurrentMusic.Artist.Name}"
                 TextAlignment="Center" />
         </StackPanel>
+        <TextBlock
+                x:Name="prelyric"
+                FontSize="20"
+                Text="이전 가사가 여기에 표시됩니다."
+                TextAlignment="Center" Foreground="White" Grid.ColumnSpan="2" Margin="0,147,0,299" Grid.Row="1" />
+        <TextBlock
+            x:Name="postlyric"
+            FontSize="20"
+            Text="다음 가사가 여기에 표시됩니다."
+            TextAlignment="Center" Foreground="White" Grid.ColumnSpan="2" Margin="0,304,0,142" Grid.Row="1" />
     </Grid>
 </Window>
