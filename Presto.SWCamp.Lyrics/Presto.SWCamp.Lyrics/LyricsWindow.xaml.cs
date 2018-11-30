@@ -27,37 +27,13 @@ namespace Presto.SWCamp.Lyrics
 
         SortedList<double, string> SplitLists = new SortedList<double, string>();
         //음악이 변경되었을때 가사정보에서 시간과 해당하는 가사를 읽어옴.
+        SortedList<double, string> MemberLists = new SortedList<double, string>();
         
-        
-        bool IsMusicPlaying = false;
-        //음악이 재생되는지 확인
         bool IsMemberDisplay = false;
         //가수의 파트가 나뉘어 표시될 경우
-        bool IsMultiLyric = false;
-        //다수의 가사가 출력될경우
 
         public LyricsWindow()
         {
-
-            /////// 배워가는 곳/////
-            
-           
-
-            //if (PrestoSDK.PrestoService.Player.PlaybackState == Common.PlaybackState.Playing)
-            // 노래가 재생중인 상태
-
-            //PrestoSDK.PrestoService.Player.CurrentMusic.Artist.Name
-            //PrestoSDK.PrestoService.Player.CurrentMusic.Album.Picture
-            //가수와 앨범또한 구조체형태로 되어있음
-
-            //PrestoSDK.PrestoService.Player.StreamChanged += Player_StreamChanged;
-            //presto에서 현재 재생중인 음악이 변경되었을 때
-            //MessageBox.Show( PrestoSDK.PrestoService.Player.CurrentMusic.Path);
-            //Path.GetFileNameWithoutExtension
-
-            //String.IsNullOrWhiteSpace()
-            ///////////////////////
-
             InitializeComponent();
 
             PrestoSDK.PrestoService.Player.StreamChanged += Player_StreamChanged;
@@ -68,9 +44,6 @@ namespace Presto.SWCamp.Lyrics
             };
             timer.Tick += Timer_Tick;
             timer.Start();
-
-            
-
         }
         
         // 재생하는 노래가 바뀔 때마다 가사를 불러올 수 있도록 함
@@ -78,10 +51,14 @@ namespace Presto.SWCamp.Lyrics
         {
             //전역변수로 설정된 시간과 가사 변수를 초기화 시킨다.
             SplitLists.Clear();
+            MemberLists.Clear();
             //현재 가사창 또한 초기화 시킨다.
-            //prelyric.Text = "";
-            //lyricBox.Text = "";
-            //postlyric.Text = "";
+            prelyric.Text = "";
+            lyricBox.Text = "";
+            postlyric.Text = "";
+            memberBox.Text = "";
+
+            IsMemberDisplay = false;
 
             // 다른 컴터에서 사용시 변경해야함
             string songDirect = @"C:\Users\AndyLee\Documents\Gitahead\LyricPlugin\Lyrics\";
@@ -104,7 +81,8 @@ namespace Presto.SWCamp.Lyrics
                     if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
                     {
                         IsMemberDisplay = true; //멤버 파트가 쓰여있는 가사
-                        SplitLists.Add(time_t.TotalMilliseconds, splitData[2].Trim());
+                        SplitLists.Add(time_t.TotalMilliseconds, splitData[2].Trim()); //가사 저장
+                        MemberLists.Add(time_t.TotalMilliseconds, splitData[1].Trim()+"]"); //멤버 파트 저장
                     }
                     else
                     {
@@ -117,7 +95,9 @@ namespace Presto.SWCamp.Lyrics
                     if (lines[index].Length > splitData[0].Length + splitData[1].Length + 1)
                     {
                         IsMemberDisplay = true; //멤버 파트가 쓰여있는 가사
+                        //여러줄 가사 저장
                         SplitLists[time_t.TotalMilliseconds] = SplitLists[time_t.TotalMilliseconds] + "\n" + splitData[2].Trim();
+                        MemberLists.Add(time_t.TotalMilliseconds, splitData[1].Trim()); //멤버 파트 저장
                     }
                     else
                     {
@@ -125,26 +105,22 @@ namespace Presto.SWCamp.Lyrics
                         //가사에 한 줄 띄고 가사 추가
                     }
                 }
-
-
             }
-            //가사가 준비됨
-            IsMusicPlaying = true;
 
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (IsMusicPlaying)
+            //노래가 재생중인 상태
+            if (PrestoSDK.PrestoService.Player.PlaybackState == Common.PlaybackState.Playing)
             {
-                var currentTime = PrestoSDK.PrestoService.Player.Position+10;
-                //Need to make a sync
+                var currentTime = PrestoSDK.PrestoService.Player.Position+10;//+10 to sync
+                //Need to make better sync
 
                 for (int i = SplitLists.Count - 1;
                      SplitLists.Keys[i] > currentTime && SplitLists.Keys[0] <= currentTime;
                      i--)
                 {
-                    //gonna use binary search
                     if(Math.Max(0, i-1) == 0)
                     {
                         prelyric.Text = "";
@@ -174,13 +150,27 @@ namespace Presto.SWCamp.Lyrics
                     postlyric.Text = SplitLists.Values[0]+"\n"+SplitLists.Values[1];
                 }
 
+                if (IsMemberDisplay) // 파트별 멤버 내용이 있을 경우
+                {
+                    for (int i = MemberLists.Count - 1;
+                     MemberLists.Keys[i] > currentTime && MemberLists.Keys[0] <= currentTime;
+                     i--)
+                    {
+                        //멤버 박스에 파트별 멤버를 표시
+                        memberBox.Text = MemberLists.Values[Math.Max(0, i - 1)];
+                    }
 
+                }
             }
             
-        }
-
+        }// Timer_Tick
 
     }
 }
 
 
+/////////
+// 가사가 현재 창에서 표시할 수 있는 길이보다 길 경우
+// font크기에 변화를 줄 수 있는지
+//
+/////////

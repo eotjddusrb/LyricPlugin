@@ -5,9 +5,9 @@ CBNU Open Source Lyric Plugin
 
 ## 구현된 기능
 * 싱크 가사 출력
-    * 이진탐색(예정)
+
 * Dance The Night Away 같은 멤버 파트가 있는 가사 구현
-    * 각 파트의 멤버가 출력되는 textbox(예정)
+    * 각 파트의 멤버가 출력되는 textbox구현
 * 팝송, J-pop 등 2줄, 3줄가사도 출력
 * 가사 창에 좋은 디자인
     * 가사를 보기 쉽도록 창을 세로로 길게 설정
@@ -18,3 +18,5 @@ CBNU Open Source Lyric Plugin
 	    - 다음 가사는 두줄로 표시
 	    - 가장 마지막 가사가 표시될 때는 다음 가사란에 "감사합니다" 출력
 	* 창 뒷배경으로 blur처리된 앨범아트 사용
+
+

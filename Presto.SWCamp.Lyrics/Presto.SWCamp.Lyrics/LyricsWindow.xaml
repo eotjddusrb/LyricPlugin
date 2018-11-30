@@ -68,5 +68,9 @@
             FontSize="18"
             Text="다음 가사가 여기에 표시됩니다."
             TextAlignment="Center" Foreground="White" Grid.ColumnSpan="2" Margin="0,290,0,0" Grid.Row="1" />
+        <TextBlock
+            x:Name="memberBox"
+            FontSize="20"
+            TextAlignment="Center" VerticalAlignment="Top" Foreground="White" Grid.Column="0" Grid.Row="1" />
     </Grid>
 </Window>
